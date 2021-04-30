@@ -218,3 +218,6 @@ public class Polygon {
     return BoundingBox;
 }
 }
+
+/*Score: 96
+-4 points because in the class highestVertex there is aliasing*/
