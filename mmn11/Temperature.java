@@ -53,3 +53,4 @@ public class Temperature
         }
     }
 }
+/*-5 points because cases are lowercase instead of uppercase*/
