@@ -134,53 +134,46 @@ public class Ex14 {
         }
     }
 /**
- * In this method Given two-dimensional array with equal amount of columns and rows, contain boolean types
- * The method accepting parameter as square boolean matrix, returns which area is true(1) and which is false(0)
- * Private method (cntTrueReg) to see which indexs are true and which are false
- * Private method (toFalse) to go over the entire array to change the value to false (it is allowed)
- * Private method (isValid) the boundaries we are checking in the array
- * @param mat - the matrix of area's (of 1,0 area)
- * @return - the amount of times 1 appear in a seperated areas
+ * Given a square boolean matrix, this method counts how many separated
+ * regions contain {@code true} values. Two cells belong to the same region
+ * if they share a horizontal or vertical side.
+ *
+ * @param mat the matrix of areas (true/false)
+ * @return the number of separated true areas
  */
-// Comment - your method doesn't work ok for the following case  -2 points
-// Test 8 
-// mat: 
-// 1	0	1	0	1	
-// 0	1	0	1	0	
-// 1	0	1	0	1	
-// 0	1	0	1	0	
-// 1	0	1	0	1	
-// Expected result => 13 Student result => 11
     public static int cntTrueReg(boolean[][] mat) {
-        if (mat == null || mat.length != mat[0].length) // cheking if the array is empty
-        {
+        if (mat == null || mat.length == 0 || mat.length != mat[0].length) {
             return 0;
         }
-        int[][] temp = new int[mat.length][mat.length]; // pointer to tell the location
-        return cntTrueReg(mat, 0, 0, temp);
-    }
-    private static int cntTrueReg(boolean[][] mat, int i, int j, int[][] temp) {
-        if (!isValid(mat.length, i, j) || temp[i][j] == 1) // chechking if it is out of boundaries 
-            return 0; // if it is - return - 0
-        temp[i][j] = 1; // pointing on the location
-        if (mat[i][j] && i == 0 && j == 0) {
-            toFalse(mat, i, j);
-            return 1 + cntTrueReg(mat, i + 1, j, temp) + cntTrueReg(mat, i, j + 1, temp) + cntTrueReg(mat, i + 1, j + 1, temp); // continuing for the entire array
+
+        boolean[][] visited = new boolean[mat.length][mat.length];
+        int count = 0;
+
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[i].length; j++) {
+                if (mat[i][j] && !visited[i][j]) {
+                    markRegion(mat, visited, i, j);
+                    count++;
+                }
+            }
         }
-        if (mat[i][j]) {
-            toFalse(mat, i, j); // returning what is true
-            return 1;
-        }
-        return cntTrueReg(mat, i+1, j, temp) + cntTrueReg(mat, i, j+1, temp) + cntTrueReg(mat, i+1, j+1, temp); // continuing for the entire array
+
+        return count;
     }
-    private static boolean toFalse(boolean[][] m, int i, int j) {
-        if (!isValid(m.length, i, j) || !m[i][j]) // chechking if it is out of boundaries 
-        {
-            return false;
+
+    private static void markRegion(boolean[][] mat, boolean[][] visited, int i, int j) {
+        if (!isValid(mat.length, i, j) || visited[i][j] || !mat[i][j]) {
+            return;
         }
-        m[i][j] = false; // false value
-        return toFalse(m, i+1, j) || toFalse(m, i-1, j) || toFalse(m, i, j+1) || toFalse(m, i, j-1); // continuing for the entire array
+
+        visited[i][j] = true;
+
+        markRegion(mat, visited, i + 1, j);
+        markRegion(mat, visited, i - 1, j);
+        markRegion(mat, visited, i, j + 1);
+        markRegion(mat, visited, i, j - 1);
     }
+
     private static boolean isValid(int arrayLen, int i, int j) {
         return i > -1 && j > -1 && i < arrayLen && j < arrayLen; // the boundaries we are checking in the array, if it negative i or j
     }
